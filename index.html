@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Laroof | フリーランス</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  body { margin: 0; }
+  .font-display { font-family: 'Space Grotesk', sans-serif; }
+  .font-body { font-family: 'Inter', sans-serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(46,75,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,75,255,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .lf-header { background: rgba(231,236,250,0.9); border-bottom: 1px solid rgba(46,75,255,0.2); }
+  .lf-logo { color: #101B33; }
+  .lf-nav-link { color: #5B6B8C; transition: color 0.2s ease; }
+  .lf-nav-link:hover { color: #2E4BFF; }
+
+  .lf-btn-primary { background: #2E4BFF; color: #FFFFFF; transition: box-shadow 0.2s ease, background-color 0.2s ease; }
+  .lf-btn-primary:hover { background: #243CD6; box-shadow: 0 0 0 4px rgba(46,75,255,0.25); }
+
+  .lf-btn-outline { background: transparent; color: #2E4BFF; border: 1px solid #2E4BFF; transition: background-color 0.2s ease, color 0.2s ease; }
+  .lf-btn-outline:hover { background: #2E4BFF; color: #FFFFFF; }
+
+  .lf-card { background: #FFFFFF; border: 1px solid #CBD5E3; border-top: 4px solid #2E4BFF; }
+
+  .lf-strengths-section { background: #FFFFFF; border-top: 1px solid #CBD5E3; border-bottom: 1px solid #CBD5E3; }
+
+  .lf-placeholder { border: 1px dashed rgba(46,75,255,0.4); background: rgba(46,75,255,0.03); color: #5B6B8C; }
+
+  .lf-contact-section { background: #101B33; color: #DCE3F7; }
+  .lf-social-btn { border: 1px solid #3A4972; color: #AEBBE0; transition: border-color 0.2s ease, color 0.2s ease; }
+  .lf-social-btn:hover { border-color: #5B7FFF; color: #5B7FFF; }
+
+  .lf-glow-1 { background: radial-gradient(circle, rgba(46,75,255,0.35), transparent 70%); }
+  .lf-glow-2 { background: radial-gradient(circle, rgba(46,75,255,0.30), transparent 70%); }
+  .lf-glow-3 { background: radial-gradient(circle, rgba(91,127,255,0.5), transparent 70%); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid #2E4BFF;
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+const IconX = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" {...p}>
+    <path d="M4 4L20 20M20 4L4 20" strokeLinecap="round" />
+  </svg>
+);
+const IconInstagram = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" {...p}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+  </svg>
+);
+const IconNote = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" {...p}>
+    <path d="M5 3.5h9l5 5V20.5H5z" strokeLinejoin="round" />
+    <path d="M14 3.5V8.5h5" strokeLinejoin="round" />
+    <path d="M8 13h8M8 16.5h5" strokeLinecap="round" />
+  </svg>
+);
+const IconArrow = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...p}>
+    <path d="M7 17L17 7M17 7H9M17 7V15" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const RootMark = ({ className = "", style }) => (
+  <svg viewBox="0 0 40 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth="2.4">
+    <path d="M1 13L7 20L15 2H39" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+function Reveal({ children, className = "", delay = 0 }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+        opacity: shown ? 1 : 0,
+        transform: shown ? "translateY(0)" : "translateY(16px)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function HeroRadical() {
+  const pathRef = useRef(null);
+  useEffect(() => {
+    const el = pathRef.current;
+    if (!el) return;
+    el.style.strokeDasharray = "1000";
+    el.style.strokeDashoffset = "1000";
+    requestAnimationFrame(() => {
+      el.style.transition = "stroke-dashoffset 1.6s cubic-bezier(.22,.9,.24,1) 0.15s";
+      el.style.strokeDashoffset = "0";
+    });
+  }, []);
+  return (
+    <svg
+      viewBox="0 0 1000 220"
+      className="w-full h-auto"
+      style={{ color: "#2E4BFF" }}
+      fill="none"
+      strokeWidth="6"
+      preserveAspectRatio="none"
+    >
+      <path
+        ref={pathRef}
+        d="M0,132 L70,196 L172,18 L1000,18"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        pathLength="1000"
+      />
+    </svg>
+  );
+}
+
+function DataCard({ field, headline, body }) {
+  return (
+    <div className="lf-card p-6 sm:p-7 flex flex-col gap-3">
+      <span className="font-mono uppercase" style={{ fontSize: "11px", letterSpacing: "0.08em", color: "#2E4BFF" }}>
+        {field}
+      </span>
+      <h3 className="font-display text-lg leading-snug" style={{ color: "#101B33" }}>
+        {headline}
+      </h3>
+      <p className="text-sm leading-relaxed" style={{ color: "#5B6B8C" }}>{body}</p>
+    </div>
+  );
+}
+
+function SectionEyebrow({ children }) {
+  return (
+    <div className="flex items-center gap-2 mb-4" style={{ color: "#2E4BFF" }}>
+      <RootMark className="w-6 h-4" />
+      <span className="font-mono text-xs uppercase" style={{ letterSpacing: "0.18em" }}>{children}</span>
+    </div>
+  );
+}
+
+function LaroofSite() {
+  const [navOpen, setNavOpen] = useState(false);
+
+  const navLinks = [
+    { href: "#about", label: "About" },
+    { href: "#strengths", label: "強み" },
+    { href: "#work", label: "実績" },
+    { href: "#contact", label: "つながる" },
+  ];
+
+  return (
+    <div className="min-h-screen antialiased" style={{ background: "#E7ECFA", color: "#101B33" }}>
+      <div className="font-body">
+        <header className="lf-header sticky top-0 z-30 backdrop-blur">
+          <div className="max-w-5xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+            <a href="#top" className="lf-logo flex items-center gap-2 font-display font-semibold text-lg">
+              <RootMark className="w-6 h-4" style={{ color: "#2E4BFF" }} />
+              Laroof
+            </a>
+            <nav className="hidden sm:flex items-center gap-7 text-sm">
+              {navLinks.map((l) => (
+                <a key={l.href} href={l.href} className="lf-nav-link">
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+            <button
+              className="sm:hidden"
+              style={{ color: "#101B33" }}
+              aria-label="メニューを開く"
+              onClick={() => setNavOpen((v) => !v)}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          {navOpen && (
+            <div className="sm:hidden px-5 py-4 flex flex-col gap-3 text-sm" style={{ borderTop: "1px solid #CBD5E3", background: "#E7ECFA" }}>
+              {navLinks.map((l) => (
+                <a key={l.href} href={l.href} onClick={() => setNavOpen(false)} style={{ color: "#5B6B8C" }}>
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <section id="top" className="grid-bg relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="lf-glow-1 pointer-events-none absolute rounded-full opacity-40 blur-3xl"
+            style={{ top: "-8rem", left: "-6rem", width: "520px", height: "520px" }}
+          />
+          <div
+            aria-hidden="true"
+            className="lf-glow-2 pointer-events-none absolute rounded-full opacity-30 blur-3xl"
+            style={{ top: "2.5rem", right: "-7.5rem", width: "380px", height: "380px" }}
+          />
+          <div className="max-w-5xl mx-auto px-5 sm:px-8 pt-14 sm:pt-20 pb-16 sm:pb-24 relative">
+            <div className="max-w-2xl">
+              <HeroRadical />
+            </div>
+            <div className="mt-2 sm:mt-4 pl-1 sm:pl-3">
+              <p className="font-mono text-xs uppercase mb-4" style={{ letterSpacing: "0.18em", color: "#2E4BFF" }}>
+                Freelance / Laroof
+              </p>
+              <h1 className="font-display font-bold text-4xl sm:text-6xl leading-none tracking-tight">
+                Laroof
+              </h1>
+              <p className="mt-4 text-lg sm:text-xl max-w-xl leading-relaxed" style={{ color: "#5B6B8C" }}>
+                内に秘めた可能性を掘り起こしながら、大きな屋根の下で、人との関係を深める。
+              </p>
+              <p className="mt-4 text-sm sm:text-base max-w-xl leading-relaxed" style={{ color: "#5B6B8C" }}>
+                データの正確さと、言葉への誠実な向き合い方を大切にしています。細部まで丁寧に確認し、信頼できる仕上がりをお届けします。
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href="https://crowdworks.jp/"
+                  className="lf-btn-primary inline-flex items-center gap-2 text-sm font-medium px-5 py-3"
+                >
+                  CrowdWorksでプロフィールを見る
+                  <IconArrow className="w-4 h-4" />
+                </a>
+                <a
+                  href="#contact"
+                  className="lf-btn-outline inline-flex items-center gap-2 text-sm font-medium px-5 py-3"
+                >
+                  お問い合わせ
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" className="max-w-5xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+          <Reveal>
+            <SectionEyebrow>About</SectionEyebrow>
+            <h2 className="font-display font-semibold text-2xl sm:text-3xl mb-6">
+              Laroofという名前について
+            </h2>
+          </Reveal>
+          <Reveal delay={80}>
+            <p className="leading-loose max-w-2xl mb-10" style={{ color: "#5B6B8C" }}>
+              「Laroof」は、Latent（内に秘めた可能性）を掘り起こしながら、大きなroof（屋根）の下でみんなとの関係を深めていく、という思いを込めた名前です。ロゴに使っている√の記号には、物事をとことん掘り下げる「深堀り」の姿勢を重ねています。
+            </p>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Reveal delay={120}>
+              <div className="pt-4" style={{ borderTop: "2px solid #2E4BFF" }}>
+                <p className="font-mono text-xs uppercase mb-2" style={{ letterSpacing: "0.1em", color: "#2E4BFF" }}>
+                  Latent
+                </p>
+                <p className="text-sm leading-relaxed" style={{ color: "#5B6B8C" }}>
+                  表面には見えない、内に秘めた可能性や本質を丁寧に掘り起こすことを大切にしています。
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={200}>
+              <div className="pt-4" style={{ borderTop: "2px solid #5B7FFF" }}>
+                <p className="font-mono text-xs uppercase mb-2" style={{ letterSpacing: "0.1em", color: "#5B7FFF" }}>
+                  Roof
+                </p>
+                <p className="text-sm leading-relaxed" style={{ color: "#5B6B8C" }}>
+                  依頼者と一つ屋根の下で仕事をするような、丁寧なコミュニケーションを心がけています。
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        <section id="strengths" className="lf-strengths-section">
+          <div className="max-w-5xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+            <Reveal>
+              <SectionEyebrow>強み</SectionEyebrow>
+              <h2 className="font-display font-semibold text-2xl sm:text-3xl mb-10">
+                大切にしていること
+              </h2>
+            </Reveal>
+            <div className="grid sm:grid-cols-3 gap-4">
+              <Reveal delay={80}>
+                <DataCard
+                  field="分野"
+                  headline="データ整理・研究データ組織化"
+                  body="研究現場で培った、正確な情報整理の経験があります。膨大な情報も、ルールに沿って整えるのが得意です。"
+                />
+              </Reveal>
+              <Reveal delay={160}>
+                <DataCard
+                  field="強み"
+                  headline="細部への注意力"
+                  body="誤字脱字や表記の揺れ、整合性の誤りも見逃さず、最後まで丁寧に確認します。"
+                />
+              </Reveal>
+              <Reveal delay={240}>
+                <DataCard
+                  field="対応領域"
+                  headline="テロップ・キャプション入力"
+                  body="聞き取りと文字起こしを正確に行い、読みやすい形に整えてお届けします。"
+                />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section id="work" className="max-w-5xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+          <Reveal>
+            <SectionEyebrow>実績</SectionEyebrow>
+            <h2 className="font-display font-semibold text-2xl sm:text-3xl mb-4">
+              これまでの実績
+            </h2>
+            <p className="leading-relaxed max-w-xl mb-10" style={{ color: "#5B6B8C" }}>
+              現在、実績を準備中です。対応した案件は今後こちらに追加していきます。
+            </p>
+          </Reveal>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <Reveal key={i} delay={80 * i}>
+                <div className="lf-placeholder h-40 flex items-center justify-center text-sm font-mono">
+                  準備中
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        <section id="contact" className="lf-contact-section relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="lf-glow-3 pointer-events-none absolute rounded-full opacity-30 blur-3xl"
+            style={{ top: 0, right: 0, width: "480px", height: "480px" }}
+          />
+          <div className="max-w-5xl mx-auto px-5 sm:px-8 py-16 sm:py-24 relative">
+            <Reveal>
+              <div className="flex items-center gap-2 mb-4" style={{ color: "#5B7FFF" }}>
+                <RootMark className="w-6 h-4" />
+                <span className="font-mono text-xs uppercase" style={{ letterSpacing: "0.18em" }}>つながる</span>
+              </div>
+              <h2 className="font-display font-semibold text-2xl sm:text-3xl mb-4 max-w-md" style={{ color: "#EEF2FF" }}>
+                お仕事のご相談・ご連絡はこちら
+              </h2>
+              <p className="leading-relaxed max-w-md mb-9" style={{ color: "#AEBBE0" }}>
+                まずはCrowdWorksのプロフィールをご覧ください。SNSでも発信しています。
+              </p>
+            </Reveal>
+            <Reveal delay={80}>
+              <a
+                href="https://crowdworks.jp/"
+                className="lf-btn-primary inline-flex items-center gap-2 text-sm font-medium px-5 py-3 mb-10"
+              >
+                CrowdWorksでプロフィールを見る
+                <IconArrow className="w-4 h-4" />
+              </a>
+            </Reveal>
+            <Reveal delay={140}>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { Icon: IconX, label: "X", href: "https://x.com/laro_of" },
+                  { Icon: IconInstagram, label: "Instagram", href: "https://www.instagram.com/laro_of/" },
+                  { Icon: IconNote, label: "note", href: "https://note.com/laro_of" },
+                ].map(({ Icon, label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="lf-social-btn w-11 h-11 flex items-center justify-center"
+                  >
+                    <Icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+          <div className="relative" style={{ borderTop: "1px solid #232F4E" }}>
+            <div className="max-w-5xl mx-auto px-5 sm:px-8 py-6 flex flex-col sm:flex-row gap-2 justify-between text-xs font-mono" style={{ color: "#7C8AB5" }}>
+              <span>© 2026 Laroof</span>
+              <span>Latent / Roof / 深堀り</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<LaroofSite />);
+</script>
+</body>
+</html>
